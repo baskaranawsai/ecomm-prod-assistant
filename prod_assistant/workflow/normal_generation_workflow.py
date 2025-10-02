@@ -36,6 +36,7 @@ def build_chain(query):
     retrieved_docs=retriever.invoke(query)
     
     #retrieved_contexts = [format_docs(doc) for doc in retrieved_docs]
+    
     retrieved_contexts = [format_docs(retrieved_docs)]
     
     llm = model_loader.load_llm()
@@ -69,7 +70,7 @@ def invoke_chain(query: str, debug: bool = False):
 
 
 if __name__=='__main__':
-    user_query = "Can you suggest good budget iphone under 1,00,000 INR?"
+    user_query = "Can you suggest good budget iPhone under 1,00,000 INR?"
      
     #retriever_obj = Retriever()
     
