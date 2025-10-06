@@ -38,6 +38,7 @@ class AgenticRAG:
         }
         }
         )
+        self.mcp_tools = self.mcp_client.get_tools()
         self.workflow = self._build_workflow()
         self.app = self.workflow.compile(checkpointer=self.checkpointer)
 
@@ -46,6 +47,7 @@ class AgenticRAG:
         print("--- CALL ASSISTANT ---")
         messages = state["messages"]
         last_message = messages[-1].content
+        print("Last message:",last_message)
 
         if any(word in last_message.lower() for word in ["price", "review", "product"]):
             return {"messages": [HumanMessage(content="TOOL: retriever")]}
@@ -150,14 +152,18 @@ class AgenticRAG:
         return workflow
 
     # ---------- Public Run ----------
-    def run(self, query: str, thread_id: str = "default_thread") -> str:
+    async def run(self, query: str, thread_id: str = "default_thread") -> str:
         """Run the workflow for a given query and return the final answer."""
-        result = self.app.invoke({"messages": [HumanMessage(content=query)]},
+        result = await self.app.ainvoke({"messages": [HumanMessage(content=query)]},
                                  config={"configurable": {"thread_id": thread_id}})
         return result["messages"][-1].content
 
 
 if __name__ == "__main__":
-    rag_agent = AgenticRAG()
-    answer = rag_agent.run("What is the price of iPhone 16?")
-    print("\nFinal Answer:\n", answer)
+    async def main():
+        rag_agent = AgenticRAG()
+        #await rag_agent.async_init()
+        answer = await rag_agent.run("What is the price of iPhone 16?")
+        print("\nFinal Answer:\n", answer)
+
+    asyncio.run(main())

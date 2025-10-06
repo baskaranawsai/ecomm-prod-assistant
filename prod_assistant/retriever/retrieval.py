@@ -7,30 +7,52 @@ from langchain.retrievers.document_compressors import LLMChainFilter
 from langchain.retrievers import ContextualCompressionRetriever
 from evaluation.ragas_eval import evaluate_context_precision, evaluate_response_relevancy
 # Add the project root to the Python path for direct script execution
-# project_root = Path(__file__).resolve().parents[2]
-# sys.path.insert(0, str(project_root))
+#project_root = Path(__file__).resolve().parents[2]
+#sys.path.insert(0, str(project_root))
 
 class Retriever:
     def __init__(self):
         """_summary_
         """
+        print("++++++++++++++++")
         self.model_loader=ModelLoader()
+        print("++++++++++++++++")
         self.config=load_config()
         self._load_env_variables()
         self.vstore = None
         self.retriever_instance = None
+
+    def get_root_path(self, levels_up=1):
+        try:
+            # Works when running as a script
+            base_path = os.path.dirname(os.path.abspath(__file__))
+        except NameError:
+            # Fallback for interactive shells / notebooks
+            base_path = os.getcwd()
+        
+        # Go up N levels
+        for _ in range(levels_up):
+            base_path = os.path.dirname(base_path)
+        
+        return base_path
     
     def _load_env_variables(self):
         """_summary_
         """
-        load_dotenv()
+        ROOT_DIR = self.get_root_path(2)
+        print("ROOT DIR:", ROOT_DIR)
+
+        load_dotenv(dotenv_path=os.path.join(ROOT_DIR, ".env"))
+
+        google_api = os.getenv("GOOGLE_API_KEY")
+        print("Google Api Key :", google_api)
          
-        required_vars = ["GOOGLE_API_KEY", "ASTRA_DB_API_ENDPOINT", "ASTRA_DB_APPLICATION_TOKEN", "ASTRA_DB_KEYSPACE"]
+        #required_vars = ["GOOGLE_API_KEY", "ASTRA_DB_API_ENDPOINT", "ASTRA_DB_APPLICATION_TOKEN", "ASTRA_DB_KEYSPACE"]
         
-        missing_vars = [var for var in required_vars if os.getenv(var) is None]
+        #missing_vars = [var for var in required_vars if os.getenv(var) is None]
         
-        if missing_vars:
-            raise EnvironmentError(f"Missing environment variables: {missing_vars}")
+        #if missing_vars:
+        #    raise EnvironmentError(f"Missing environment variables: {missing_vars}")
 
         self.google_api_key = os.getenv("GOOGLE_API_KEY")
         self.db_api_endpoint = os.getenv("ASTRA_DB_API_ENDPOINT")
@@ -81,7 +103,7 @@ class Retriever:
         return output
     
 if __name__=='__main__':
-    user_query = "Can you suggest good budget iPhone under 1,00,00 INR?"
+    user_query = "Apple iPhone 16?"
     
     retriever_obj = Retriever()
     
@@ -102,7 +124,8 @@ if __name__=='__main__':
             formatted_chunks.append(formatted)
         return "\n\n---\n\n".join(formatted_chunks)
     
-    retrieved_contexts = [_format_docs(doc) for doc in retrieved_docs]
+    #retrieved_contexts = [_format_docs(doc) for doc in retrieved_docs]
+    retrieved_contexts = [_format_docs(retrieved_docs)]
     
     #this is not an actual output this have been written to test the pipeline
     response="iphone 16 plus, iphone 16, iphone 15 are best phones under 1,00,000 INR."

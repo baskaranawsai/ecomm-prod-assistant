@@ -66,6 +66,7 @@ class AgenticRAG:
         retriever = self.retriever_obj.load_retriever()
         docs = retriever.invoke(query)
         context = self._format_docs(docs)
+        print("Context:", context)
         return {"messages": [HumanMessage(content=context)]}
 
     def _grade_documents(self, state: AgentState) -> Literal["generator", "rewriter"]:
@@ -144,7 +145,7 @@ if __name__ == "__main__":
     
     
     rag_agent = AgenticRAG()
-    answer = rag_agent.run("What is the price of iPhone 15?")
+    answer = rag_agent.run("What is the price of Samsung?")
     print("\nFinal Answer:\n", answer)
     
     
