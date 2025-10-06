@@ -34,11 +34,11 @@ class AgenticRAG:
             {
             "hybrid_search": {
             "transport": "streamable_http",
-            "url": "http://localhost:8000/mcp"
+            "url": "http://127.0.0.1:8000/mcp"
         }
         }
         )
-        self.mcp_tools = self.mcp_client.get_tools()
+        self.mcp_tools = asyncio.run(self.mcp_client.get_tools())
         self.workflow = self._build_workflow()
         self.app = self.workflow.compile(checkpointer=self.checkpointer)
 
