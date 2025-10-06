@@ -38,7 +38,8 @@ class AgenticRAG:
         }
         }
         )
-        self.mcp_tools = asyncio.run(self.mcp_client.get_tools())
+        #self.mcp_tools = asyncio.run(self.mcp_client.get_tools())
+        self.mcp_tools = None
         self.workflow = self._build_workflow()
         self.app = self.workflow.compile(checkpointer=self.checkpointer)
 

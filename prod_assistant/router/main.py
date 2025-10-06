@@ -30,6 +30,7 @@ async def index(request: Request):
 async def chat(msg: str = Form(...)):
     """Call the Agentic RAG workflow."""
     rag_agent = AgenticRAG()
+    await rag_agent.async_init()
     answer = rag_agent.run(msg)   # run() already returns final answer string
     print(f"Agentic Response: {answer}")
     return answer
